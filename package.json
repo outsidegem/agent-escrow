@@ -1,0 +1,14 @@
+{
+  "name": "@digital-mineral/agent-escrow",
+  "version": "0.1.0",
+  "description": "Deterministic pausing mechanism and 1-bit override router for high-stakes agent actions",
+  "main": "dist/index.js",
+  "types": "dist/index.d.ts",
+  "scripts": {
+    "build": "tsc"
+  },
+  "dependencies": {},
+  "devDependencies": {
+    "typescript": "^5.4.5"
+  }
+}
