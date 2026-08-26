@@ -1,14 +1,14 @@
 {
   "name": "@digital-mineral/agent-escrow",
   "version": "0.1.0",
-  "description": "Deterministic pausing mechanism and 1-bit override router for high-stakes agent actions",
-  "main": "dist/index.js",
-  "types": "dist/index.d.ts",
+  "description": "Deterministic runtime authorization and governance layer for autonomous AI agent actions.",
+  "main": "./dist/index.js",
+  "types": "./dist/index.d.ts",
   "scripts": {
-    "build": "tsc"
+    "build": "tsc",
+    "test": "vitest run"
   },
   "devDependencies": {
-    "@types/better-sqlite3": "^9.6.0",
     "@types/node": "^25.9.5",
     "tsx": "^4.23.12",
     "typescript": "^5.9.3",
@@ -16,9 +16,14 @@
   },
   "dependencies": {
     "@hono/node-server": "^2.1.1",
-    "better-sqlite3": "^13.0.3",
+    "commander": "^15.0.0",
+    "dotenv": "^17.4.2",
     "fast-json-stable-stringify": "^2.1.0",
     "hono": "^4.13.5",
     "zod": "^4.4.3"
-  }
+  },
+  "bin": {
+    "agent-escrow": "./dist/cli/index.js"
+  },
+  "author": "Digital Mineral Solutions LLC"
 }
