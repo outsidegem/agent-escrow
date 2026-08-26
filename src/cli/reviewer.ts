@@ -1,19 +1,17 @@
 import readline from 'readline';
-import { EscrowDB, transaction } from '../storage/db';
-import { AgentEscrow } from '../core/escrow';
-import { ActionState } from '../models/types';
+import { EscrowDB } from '../storage/db.js';
+import { AgentEscrow } from '../core/escrow.js';
+import { ActionState } from '../models/types.js';
 
 const rl = readline.createInterface({
   input: process.stdin,
   output: process.stdout
 });
 
-const getPendingActions = db.prepare(`SELECT * FROM actions WHERE state = '${ActionState.PENDING_REVIEW}'`);
-
 console.log("🛡️ Titan Escrow Interceptor active. Monitoring for high-stakes agent actions...\n");
 
 function pollPending() {
-  const pending = getPendingActions.all() as any[];
+  const pending = EscrowDB.getPendingActions.all() as any[];
   
   if (pending.length === 0) {
     setTimeout(pollPending, 3000);
@@ -28,21 +26,18 @@ function pollPending() {
   console.log(`Agent ID  : ${action.agentId}`);
   console.log(`Type      : ${action.actionType}`);
   console.log(`Risk      : ${action.riskLevel}`);
-  console.log(`Payload   : ${action.payload}`);
   console.log(`==================================================`);
   
-  rl.question(`Do you authorize the agent to execute this transaction? (y/N): `, (answer) => {
+  rl.question(`Authorize this transaction? (y/N): `, (answer) => {
     const isApproved = answer.toLowerCase() === 'y';
     const newState = isApproved ? ActionState.APPROVED : ActionState.DENIED;
-    const reason = isApproved ? 'Human override: Approved' : 'Human override: Denied';
     
     try {
-      AgentEscrow.advanceState(action.hashId, newState, reason);
-      console.log(isApproved ? `✅ Authorization granted. Releasing signature.` : `❌ Authorization denied. Agent locked.`);
+      AgentEscrow.advanceState(action.hashId, newState, 'Human override applied');
+      console.log(isApproved ? `✅ Authorization granted.` : `❌ Authorization denied.`);
     } catch (e: any) {
-      console.error(`Error processing decision: ${e.message}`);
+      console.error(`Error: ${e.message}`);
     }
-    
     setTimeout(pollPending, 1000);
   });
 }
