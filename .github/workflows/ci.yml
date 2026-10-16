@@ -1,21 +1,22 @@
-name: Enterprise Release Gates
+name: Production CI
+
 on:
   push:
-    branches: [ "main" ]
+    branches: [ main, master ]
   pull_request:
-    branches: [ "main" ]
+    branches: [ main, master ]
+
 jobs:
   build-and-test:
     runs-on: ubuntu-latest
     steps:
-    - uses: actions/checkout@v4
-    - uses: actions/setup-node@v4
-      with:
-        node-version: 22
-    - run: npm ci
-    - name: Typecheck
-      run: npx tsc --noEmit
-    - name: Security & Red Team Suite
-      run: npm test
-    - name: Build Distribution
-      run: npx tsc
+      - uses: actions/checkout@v4
+      - uses: actions/setup-node@v4
+        with:
+          node-version: '22'
+      - name: Install Dependencies
+        run: npm install --no-audit --no-fund
+      - name: Build TypeScript
+        run: npm run build
+      - name: Run Verification Suite
+        run: npm test
